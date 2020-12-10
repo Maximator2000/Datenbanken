@@ -20,7 +20,9 @@ public class FabrikView {
         jFrame.setContentPane(panel);
         jFrame.setVisible(false);
         jFrame.pack();
-        table1.removeColumn(table1.getColumn(1));
-        table1.addColumn(new TableColumn());
+    }
+
+    public JPanel getPanel() {
+        return panel;
     }
 }

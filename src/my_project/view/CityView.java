@@ -3,10 +3,10 @@ package my_project.view;
 import javax.swing.*;
 
 public class CityView {
-    private JList list1;
     private JScrollBar scrollBar1;
     private JTextField cityField;
     private JPanel jPane;
+    private JTable table1;
     private JFrame jFrame;
 
     public CityView(){

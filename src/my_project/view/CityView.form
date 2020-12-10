@@ -22,9 +22,11 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="32798" class="javax.swing.JList" binding="list1" default-binding="true">
+          <component id="ad0e3" class="javax.swing.JTable" binding="table1" default-binding="true">
             <constraints/>
-            <properties/>
+            <properties>
+              <fillsViewportHeight value="true"/>
+            </properties>
           </component>
         </children>
       </scrollpane>

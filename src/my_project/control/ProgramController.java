@@ -4,6 +4,7 @@ import KAGO_framework.control.DatabaseController;
 import KAGO_framework.control.ViewController;
 import my_project.model.House;
 import my_project.view.CityView;
+import my_project.view.FabrikView;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -44,7 +45,7 @@ public class ProgramController {
         //muss dem ViewController-Objekt mitgeteilt werden, dass es das House-Objekt zeichnen soll.
         //viewController.draw(firstHouse);
 
-        viewController.getDrawFrame().setContentPane(new CityView().getjPane());
+        viewController.getDrawFrame().setContentPane(new FabrikView().getPanel());
     }
 
     /**
