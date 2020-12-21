@@ -1,5 +1,7 @@
 package my_project.view;
 
+import my_project.control.DatenbankController;
+
 import javax.swing.*;
 
 public class CityView {
@@ -8,8 +10,10 @@ public class CityView {
     private JPanel jPane;
     private JTable table1;
     private JFrame jFrame;
+    private DatenbankController datenbankController;
 
-    public CityView(){
+    public CityView(DatenbankController datenbankController){
+        this.datenbankController=datenbankController;
         jFrame=new JFrame();
         jFrame.setContentPane(jPane);
         jFrame.pack();

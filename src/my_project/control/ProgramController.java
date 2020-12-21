@@ -20,8 +20,9 @@ public class ProgramController {
 
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
-    private DatabaseController databaseController;
-
+    private DatenbankController datenbankController;
+    private FabrikView fabrikView;
+    private CityView cityView;
     /**
      * Konstruktor
      * Dieser legt das Objekt der Klasse ProgramController an, das den Programmfluss steuert.
@@ -31,7 +32,9 @@ public class ProgramController {
      */
     public ProgramController(ViewController viewController){
         this.viewController = viewController;
-        //databaseController=new DatabaseController();
+        datenbankController=new DatenbankController();
+        fabrikView= new FabrikView(datenbankController);
+        cityView =new CityView(datenbankController);
     }
 
     /**
@@ -45,7 +48,7 @@ public class ProgramController {
         //muss dem ViewController-Objekt mitgeteilt werden, dass es das House-Objekt zeichnen soll.
         //viewController.draw(firstHouse);
 
-        viewController.getDrawFrame().setContentPane(new FabrikView().getPanel());
+        viewController.getDrawFrame().setContentPane(fabrikView.getPanel());
     }
 
     /**
