@@ -33,7 +33,7 @@ public class ProgramController {
     public ProgramController(ViewController viewController){
         this.viewController = viewController;
         datenbankController=new DatenbankController();
-        fabrikView= new FabrikView(datenbankController);
+        //fabrikView= new FabrikView(datenbankController);
         cityView =new CityView(datenbankController);
     }
 
@@ -48,7 +48,7 @@ public class ProgramController {
         //muss dem ViewController-Objekt mitgeteilt werden, dass es das House-Objekt zeichnen soll.
         //viewController.draw(firstHouse);
 
-        viewController.getDrawFrame().setContentPane(fabrikView.getPanel());
+        //viewController.getDrawFrame().setContentPane(new FabrikView(datenbankController).getPanel());
     }
 
     /**

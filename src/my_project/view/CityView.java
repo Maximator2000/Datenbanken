@@ -17,7 +17,8 @@ public class CityView {
         jFrame=new JFrame();
         jFrame.setContentPane(jPane);
         jFrame.pack();
-        jFrame.setVisible(false);
+        jFrame.setVisible(true);
+        table1.setModel(datenbankController.legeJTabelleAn("MG_Stadt"));
     }
 
     public JPanel getjPane() {

@@ -4,7 +4,9 @@ import KAGO_framework.control.DatabaseController;
 import KAGO_framework.model.abitur.datenbanken.mysql.QueryResult;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 public class DatenbankController {
     //TODO   Datenbanken anlegen und darstellen
@@ -98,25 +100,40 @@ public class DatenbankController {
         sql="ALTER TABLE MG_Route\n" +
                 "ADD CONSTRAINT fkr2 FOREIGN KEY (Fabrik) REFERENCES MG_Fabrik(ID)";
         ausführen(sql,"1:n Beziehung zwischen Fabrik und Route erzeugt");
-        /*EXISTS( SELECT 1\n" +
-                "FROM INFORMATION_SCHEMA.TABLES\n" +
-                        "WHERE TABLE_NAME='MG_Fabrik')*/
-                /*"CREATE TABLE MG_Stadt\n"+
-                "Name VARCHAR(40)\n"+
-                "CREATE TABLE MG_Fabrik(\n" +
-                "ID INTEGER NOT NULL\n"+
-                "Name VARCHAR(40) NOT NULL\n"+
-                "AktProduktion INTEGER\n"+
-                "MaxProduktion INTEGER\n"+
-                "KostenProStk INTEGER\n"+
-                "Stadt VARCHAR(40)\n"+
-                "PRIMARY KEY(ID)";
-        /*String sql="CREATE TABLE Fabrik(\n" +
-                "ID VARCHAR(3) NOT NULL;\n" +
-                "Name VARCHAR(40) NOT NULL\n" +
-                "aktProduktion\n"+
-                "PRIMARY KEY(ID)";*/
+       //Tabelle füllen:
 
+        ausführen(sql,"London unter Städte hinzugefügt");
+        String[] städte=new String[]{"Joshuandria","Lisa de Janeiro","Maxinopel","Renehausen","Knebopolis","AmbroCity","St. Iboburg","San Marcisco"};
+        for(String stadt:städte){
+            sql="INSERT INTO MG_Stadt (Name,Bevölkerung,Lagerkapazität,Angebot,Nachfrage)\n" +
+                    "VALUES ('"+stadt+"',"+(int)(100000+Math.random()*(9900000))+","+(int)(100000+Math.random()*(9900000))+",0,0)";
+            ausführen(sql,stadt+" wurde als Stadt hinzugefügt");
+        }
+        for(int i=0;i<16;i++){
+            double r=Math.random();
+            String art="";
+            if(r>0.66){
+                art="LKW";
+            }else if(r>0.33){
+                art="Flugzeug";
+            }else{
+                art="Schiff";
+            }
+            int z=gibZahlAußer(i%8,7);
+            sql="INSERT INTO MG_Straße (ID,Kosten,Dauer,Art,Start,Ziel)\n" +
+                    "VALUES("+i+","+(int)(1000+Math.random()*99000)+","+(int)(1+Math.random()*9)+",'"+art+"','"
+        +städte[z]+"','"+städte[i%8]+"');";
+            ausführen(sql,"Eine Straße von "+städte[z]+" bis "+städte[i%8]+" wurde erstellt");
+        }
+
+    }
+
+    private int gibZahlAußer(int ausnahme, int höchste){
+        int r=ausnahme;
+        while(r==ausnahme){
+            r=(int)(Math.random()*höchste+1);
+        }
+        return r;
     }
 
     private void ausführen(String anweisung,String erfolgsmeldung){
@@ -128,13 +145,25 @@ public class DatenbankController {
         }
     }
 
-    public JTable legeJTabelleAn(String name){
+    public DefaultTableModel legeJTabelleAn(String name){
         String sql="SELECT *\n" +
                 "FROM "+name;
         databaseController.executeStatement(sql);
         if(databaseController.getErrorMessage()==null){
             QueryResult qR =databaseController.getCurrentQueryResult();
-            return new JTable(qR.getData(),qR.getColumnNames());
+            String[] column=qR.getColumnNames();
+            String[][] values=qR.getData();
+            return new DefaultTableModel(qR.getData(),qR.getColumnNames());
+            /*System.out.println("Daten von "+name+" übernommen");
+            for(int i=0;i<table.getColumnCount();i++){
+                table.addColumn(new TableColumn(i));
+                table.getColumnModel().getColumn(i).setHeaderValue(column[i]);
+            }
+            for(int i=0;i<values.length;i++){
+                for(int j=0;j<values.length;j++){
+                    table.getModel().setValueAt(values[i][j],i,j);
+                }
+            }*/
         }else{
             System.out.println(databaseController.getErrorMessage());
             return null;
