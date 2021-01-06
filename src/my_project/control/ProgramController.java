@@ -1,13 +1,12 @@
 package my_project.control;
 
-import KAGO_framework.control.DatabaseController;
 import KAGO_framework.control.ViewController;
-import my_project.model.House;
-import my_project.view.CityView;
-import my_project.view.FabrikView;
+import KAGO_framework.model.abitur.datenstrukturen.Stack;
+import my_project.view.*;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowListener;
 
 /**
  * Ein Objekt der Klasse ProgramController dient dazu das Programm zu steuern. Die updateProgram - Methode wird
@@ -21,8 +20,23 @@ public class ProgramController {
     // Referenzen
     private ViewController viewController;  // diese Referenz soll auf ein Objekt der Klasse viewController zeigen. Über dieses Objekt wird das Fenster gesteuert.
     private DatenbankController datenbankController;
+    private WindowListener windowListener;
+    private BudgeController budgeController;
     private FabrikView fabrikView;
     private CityView cityView;
+    private StartView startView;
+    private FabrikNeuView fabrikNeuView;
+    private LinienNeuView linienNeuView;
+    private RouteView routeView;
+    private Stack<Integer> scenenStack;
+    private View[] views;
+    private static final int START_NUM=0;
+    private static final int FABRIK_NUM=1;
+    private static final int CITY_NUM=2;
+    private static final int NEUEFABRIK_NUM=3;
+    private static final int ROUTE_NUM=4;
+    public static final int NEUELINIE_NUM=5;
+    private static final int BACK_NUM=6;
     /**
      * Konstruktor
      * Dieser legt das Objekt der Klasse ProgramController an, das den Programmfluss steuert.
@@ -32,9 +46,18 @@ public class ProgramController {
      */
     public ProgramController(ViewController viewController){
         this.viewController = viewController;
-        datenbankController=new DatenbankController();
-        //fabrikView= new FabrikView(datenbankController);
-        cityView =new CityView(datenbankController);
+        datenbankController=new DatenbankController(this);
+        budgeController=new BudgeController(datenbankController);
+        startView =new StartView(datenbankController,this,FABRIK_NUM);
+        fabrikView=new FabrikView(datenbankController,this,CITY_NUM,NEUEFABRIK_NUM,ROUTE_NUM);
+        fabrikNeuView=new FabrikNeuView(datenbankController,this,true);
+        cityView=new CityView(datenbankController,this);
+        routeView=new RouteView(this,datenbankController,true,NEUELINIE_NUM);
+        linienNeuView=new LinienNeuView(this,datenbankController,true);
+        views =new View[]{startView,fabrikView,cityView,fabrikNeuView,routeView,linienNeuView};
+        scenenStack=new Stack<>();
+        scenenStack.push(START_NUM);
+
     }
 
     /**
@@ -69,4 +92,67 @@ public class ProgramController {
     public void mouseClicked(MouseEvent e){
 
     }
+
+    public int berechneWert(JTextArea textArea,JTextField textField,String ziel,String auswahl){
+        String[] tmp=auswahl.split(",");
+        linienNeuView.setZiel(tmp[0]);
+        textArea.setText(textArea.getText()+"-->"+tmp[0]);
+        if(!textField.getText().equals("")) {
+            int temp=Integer.parseInt(tmp[1]) + Integer.parseInt(textField.getText());
+            textField.setText(temp+"");
+        }else{
+            textField.setText(tmp[1]);
+        }
+        return Integer.parseInt(tmp[3]);
+    }
+
+    public void aktualisiere(){
+        fabrikNeuView.aktualisiere();
+    }
+
+    public void szenenWechsel(int next) {
+        views[scenenStack.top()].getJFrame().setVisible(false);
+        if (next == BACK_NUM) {
+            scenenStack.pop();
+            if(!scenenStack.isEmpty()) {
+                views[scenenStack.top()].aktualisiere();
+                views[scenenStack.top()].getJFrame().setVisible(true);
+            }
+        } else {
+            views[next].aktualisiere();
+            views[next].getJFrame().setVisible(true);
+            scenenStack.push(next);
+        }
+    }
+    public void szenenWechsel(){
+        szenenWechsel(BACK_NUM);
+    }
+
+
+    public boolean pay(int sum){
+        return budgeController.pay(sum);
+    }
+    public void startTimer(){
+        budgeController.startTimer();
+    }
+    public int getHighestProd(){
+        return budgeController.highestProd();
+    }
+    public int getBudge(){
+        return budgeController.getBudge();
+    }
+    public int getCostsForProduktivity(int productivity){
+        return budgeController.costForProductivity(productivity);
+    }
+    public void setAltePop(int pop){
+        budgeController.setAlteBev(pop);
+    }
+    public void preisErhöhung(int newPop){
+        budgeController.raisePreis(newPop);
+        JOptionPane.showMessageDialog(null,"Der neue Preis beträgt : "+budgeController.getPreis());
+    }
+    public double getPreis(){
+        return budgeController.getPreis();
+    }
+
 }
