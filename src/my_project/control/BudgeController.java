@@ -22,6 +22,7 @@ public class BudgeController {
         budge=10000;
         kostenProLeistung=200;
         timer=new Timer();
+        //1
     }
 
     public void startTimer(){
