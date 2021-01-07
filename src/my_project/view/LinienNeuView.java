@@ -41,6 +41,7 @@ public class LinienNeuView extends View{
             public void actionPerformed(ActionEvent e) {
                 ids=new Queue<>();
                 idCount=0;
+                kostenTextField.setText("");
                 textArea1.setText(fabrikBox2.getModel().getSelectedItem().toString().split(",")[2]);
                 straßenBox1.setEnabled(true);
                 auswählenButton.setEnabled(true);

@@ -34,8 +34,8 @@ public class StartView extends View{
         jFrame.pack();
         jFrame.setVisible(true);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        panel.setSize(200,400);
-        panel.setLocation(400,500);
+        jFrame.setSize(250,400);
+        jFrame.setLocation(800,400);
         datenbankController.getTableRow(cityBox,"MG_Stadt","Name");
         slider1.setMaximum(datenbankController.getProgramController().getHighestProd());
         slider1.addChangeListener(new ChangeListener() {

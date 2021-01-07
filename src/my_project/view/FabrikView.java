@@ -21,6 +21,7 @@ public class FabrikView extends View {
     private JPanel panel;
     private JScrollPane jScrolPAne;
     private JTable table1;
+    private JTextField infoField;
     private DatenbankController datenbankController;
 
     private int stadtNum,neuFabrikNum,routeNum;
@@ -33,8 +34,11 @@ public class FabrikView extends View {
         this.stadtNum=stadtNum;
         jFrame.setContentPane(panel);
         jFrame.setVisible(false);
+        jFrame.setSize(700,400);
+        jFrame.setLocation(500,300);
         jFrame.pack();
         table1.setModel(datenbankController.legeJTabelleAn("MG_Fabrik"));
+        infoField.setText("Vermögen : "+programController.getBudge()+" ; Preis/Stück : "+programController.getPreis()+" ; Gesamtproduktion pro Zeit : "+datenbankController.getProduction()+" ; Steuern pro Zeit : "+datenbankController.getSteuerSumme());
         städteButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -84,6 +88,7 @@ public class FabrikView extends View {
 
     public void aktualisiere(){
         table1.setModel(datenbankController.legeJTabelleAn("MG_Fabrik"));
+        infoField.setText("Vermögen : "+programController.getBudge()+" ; Preis/Stück : "+Math.round(programController.getPreis())+" ; Gesamtproduktion / Zeit : "+datenbankController.getProduction()+" ; Steuern / Zeit : "+datenbankController.getSteuerSumme());
     }
 
     public JPanel getPanel() {

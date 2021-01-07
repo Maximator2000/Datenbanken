@@ -70,7 +70,7 @@ public class ProgramController {
         //Damit die draw-Methode des Objekts hinter firstHouse aufgerufen wird,
         //muss dem ViewController-Objekt mitgeteilt werden, dass es das House-Objekt zeichnen soll.
         //viewController.draw(firstHouse);
-
+        viewController.setDrawFrameVisible(false);
         //viewController.getDrawFrame().setContentPane(new FabrikView(datenbankController).getPanel());
     }
 
@@ -108,6 +108,7 @@ public class ProgramController {
 
     public void aktualisiere(){
         fabrikNeuView.aktualisiere();
+        fabrikView.aktualisiere();
     }
 
     public void szenenWechsel(int next) {

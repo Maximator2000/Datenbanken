@@ -16,7 +16,7 @@ public class BudgeController {
 
     public BudgeController(DatenbankController datenbankController){
         this.datenbankController=datenbankController;
-        preis=4;
+        preis=5;
         delay=1000;
         period=20000;
         budge=10000;
@@ -30,10 +30,15 @@ public class BudgeController {
             @Override
             public void run() {
                 budge=budge+datenbankController.gibMenge()*(int)preis-datenbankController.gibLieferkosten();
+                budge-=datenbankController.getSteuerSumme();
                 datenbankController.getProgramController().aktualisiere();
                 System.out.println("neues Budge: "+budge);
             }
         },delay,period);
+    }
+
+    public void zieheSteuernAb(){
+
     }
 
     public void raisePreis(double neueBev){

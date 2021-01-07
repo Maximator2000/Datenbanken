@@ -22,7 +22,7 @@ public class CityView extends View{
         jFrame.setContentPane(jPane);
         jFrame.pack();
         jFrame.setVisible(false);
-        table1.setModel(datenbankController.legeJTabelleAn("MG_Stadt"));
+        table1.setModel(datenbankController.legeStadtTabelleAn());
         zurückButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -41,6 +41,6 @@ public class CityView extends View{
 
     @Override
     public void aktualisiere() {
-        table1.setModel(datenbankController.legeJTabelleAn("MG_Stadt"));
+        table1.setModel(datenbankController.legeStadtTabelleAn());
     }
 }

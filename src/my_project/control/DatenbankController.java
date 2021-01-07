@@ -76,11 +76,11 @@ public class DatenbankController {
         sql="CREATE TABLE MG_Stadt(\n" +
                 "Name VARCHAR (30) NOT NULL,\n" +
                 "Bevölkerung INTEGER,\n" +
-                "Lagerkapazität INTEGER,\n" +
-                "Angebot INTEGER,\n" +
-                "Nachfrage INTEGER,\n" +
                 "Steuer INTEGER,\n" +
                 "PRIMARY KEY (Name))\n";
+        /*"Lagerkapazität INTEGER,\n" +
+                "Angebot INTEGER,\n" +
+                "Nachfrage INTEGER,\n" +*/
         ausführen(sql,"MG_Stadt wurde neu erstellt");
          sql="CREATE TABLE MG_Straße(\n" +
                 "ID INTEGER NOT NULL,\n" +
@@ -126,24 +126,28 @@ public class DatenbankController {
         ausführen(sql,"1:n Beziehung zwischen Stadt und Route erzeugt");
         String[] steuern=new String[]{"Bau","Immer","Nichts"};
         int count=0;
+        int gesamt=0;
         String[] städte=new String[]{"Joshuandria","Lisa de Janeiro","Maxinopel","Renedig","Knebopolis","AmbroCity","St. Ibosburg","San Marcisco"};
         for(String stadt:städte){
             int idS=(int)(Math.random()*3);
             int pop=(int)(100000+Math.random()*(9900000));
-            sql="INSERT INTO MG_Stadt (Name,Bevölkerung,Lagerkapazität,Angebot,Nachfrage,Steuer)\n" +
-                    "VALUES ('"+stadt+"',"+pop+","+(int)(100000+Math.random()*(9900000))+",0,0,"+count+")";
+            int kosten=(int)(Math.random()*200+50);
+            sql="INSERT INTO MG_Stadt (Name,Bevölkerung,Steuer)\n" +
+                    "VALUES ('"+stadt+"',"+pop+","+count+")";
             ausführen(sql,stadt+" wurde als Stadt hinzugefügt");
             sql="INSERT INTO MG_Steuer (ID,Art,Kosten,Stadt)\n" +
-                    "VALUES ("+count+",'"+steuern[idS]+"',"+(2-idS)*pop+",'"+stadt+"')";
-            ausführen(sql,idS+" wurde als Steuer hinzugefügt");
+                    "VALUES ("+count+",'"+steuern[idS]+"',"+kosten+",'"+stadt+"')";
+            ausführen(sql,count+" wurde als Steuer hinzugefügt");
             count++;
+            gesamt+=kosten;
         }
+        System.out.println("!!!!!!!!!!!!!!!!!!"+gesamt+"!!!!!!!!!!!!!!!!!");
         sql="ALTER TABLE MG_Stadt\n" +
                 "ADD CONSTRAINT fks FOREIGN KEY (Steuer) REFERENCES MG_Steuer(ID)";
         ausführen(sql,"1:1 Beziehung zwischen Steuer und Stadt erzeugt");
         sql="ALTER TABLE MG_Steuer\n" +
                 "ADD CONSTRAINT fkb FOREIGN KEY (Stadt) REFERENCES MG_Stadt(Name)";
-        ausführen(sql,"1:1 Beziehung zwischen Steuer und Stadt erzeugt");
+        ausführen(sql,"1:1 Beziehung zwischen Stadt und Steuer erzeugt");
        //Tabelle füllen:
 
         //ausführen(sql,"London unter Städte hinzugefügt");
@@ -165,7 +169,7 @@ public class DatenbankController {
                 z=gibZahlAußer(i%8,7);
             }
             sql="INSERT INTO MG_Straße (ID,Kosten,Dauer,Art,Start,Ziel)\n" +
-                    "VALUES("+i+","+(int)(1+Math.random()*99)+","+(int)(1+Math.random()*9)+",'"+art+"','"
+                    "VALUES("+i+","+(int)(1+Math.random()*9)+","+(int)(1+Math.random()*9)+",'"+art+"','"
         +städte[z]+"','"+städte[i%8]+"');";
             ausführen(sql,"Eine Straße von "+städte[z]+" bis "+städte[i%8]+" wurde erstellt");
         }
@@ -213,10 +217,55 @@ public class DatenbankController {
             return null;
         }
     }
+    public DefaultTableModel legeStadtTabelleAn(){
+        String sql="SELECT MG_Stadt.Name AS Name, MG_Stadt.Bevölkerung AS Bevölkerung, MG_Steuer.Art AS Steuerbezeichnung, MG_Steuer.Kosten AS Kosten\n" +
+                "FROM MG_Stadt JOIN MG_Steuer ON MG_Stadt.Steuer=MG_Steuer.ID";
+        ausführen(sql,"Stadt Tabelle wird angelelgt");
+        if(databaseController.getErrorMessage()==null) {
+            QueryResult qR = databaseController.getCurrentQueryResult();
+            System.out.println(qR.getColumnNames()[3]);
+            return new DefaultTableModel(qR.getData(), qR.getColumnNames());
+        }
+        return null;
+    }
 
-    public void getTableRow(JComboBox jComboBox,String tableName,String columnNames,String groupName,String joinName){
-        //String columns=arrayToString(columnNames);
+    public String getTaxes(String stadt){
+        String res="";
+        String sql="SELECT Art, Kosten\n" +
+                "FROM MG_Stadt st JOIN MG_Steuer t ON st.Steuer=t.ID\n" +
+                "WHERE t.stadt='"+stadt+"'";
+        ausführen(sql,"Steuerinformationen abgefragt");
+        if(databaseController.getErrorMessage()==null) {
+            QueryResult qR = databaseController.getCurrentQueryResult();
+            res=qR.getData()[0][0]+" : "+qR.getData()[0][1];
 
+        }
+        return res;
+    }
+
+    public int getProduction(){
+        String sql="SELECT SUM(AktProduktion)\n" +
+                "FROM MG_Fabrik";
+        ausführen(sql,"Gesamtproduktion erfahren");
+        if(databaseController.getErrorMessage()==null && databaseController.getCurrentQueryResult().getData()[0][0]!=null){
+            System.out.println(databaseController.getCurrentQueryResult().getData()[0][0]);
+            return Integer.parseInt(databaseController.getCurrentQueryResult().getData()[0][0]);
+        }
+        return 0;
+    }
+
+    public int getSteuerSumme() {
+        String sql = "SELECT SUM(Kosten)\n" +
+                "FROM (MG_Steuer t JOIN MG_Stadt st ON t.Stadt=st.Name) LEFT JOIN MG_Fabrik f ON f.Stadt=st.Name \n" +
+                "WHERE t.Art='Immer' OR (t.Art='Bau' AND f.Stadt IS NOT NULL)";
+        ausführen(sql,"Steuern werden berechnet");
+        if(databaseController.getErrorMessage()==null  && databaseController.getCurrentQueryResult().getData()[0][0]!=null) {
+            QueryResult qR = databaseController.getCurrentQueryResult();
+            return Integer.parseInt(qR.getData()[0][0]);
+        }
+        return 0;
+    }
+        public void getTableRow(JComboBox jComboBox,String tableName,String columnNames,String groupName,String joinName){
         jComboBox.removeAllItems();
         String sql="SELECT "+columnNames+"\n" +
                 "FROM "+tableName;
