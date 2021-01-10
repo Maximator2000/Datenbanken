@@ -34,13 +34,14 @@ public class BudgeController {
                 budge-=datenbankController.getSteuerSumme();
                 datenbankController.getProgramController().aktualisiere();
                 System.out.println("neues Budge: "+budge);
+                if(budge<0){
+                    bankrot();
+                }
             }
         },delay,period);
     }
 
-    public void zieheSteuernAb(){
 
-    }
 
     public void raisePreis(double neueBev){
         System.out.println("!!!!!!!!!!!!!"+neueBev+" "+alteBev+" "+(neueBev/alteBev));
@@ -76,5 +77,11 @@ public class BudgeController {
 
     public double getPreis() {
         return preis;
+    }
+
+    public void bankrot(){
+        budge=10000;
+        preis=5;
+        datenbankController.getProgramController().neustart();
     }
 }

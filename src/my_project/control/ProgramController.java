@@ -28,6 +28,7 @@ public class ProgramController {
     private FabrikNeuView fabrikNeuView;
     private LinienNeuView linienNeuView;
     private RouteView routeView;
+    private AnleitungsView anleitungsView;
     private Stack<Integer> scenenStack;
     private View[] views;
     private static final int START_NUM=0;
@@ -36,7 +37,8 @@ public class ProgramController {
     private static final int NEUEFABRIK_NUM=3;
     private static final int ROUTE_NUM=4;
     public static final int NEUELINIE_NUM=5;
-    private static final int BACK_NUM=6;
+    public static final int ANLEITUNG_NUM=6;
+    private static final int BACK_NUM=7;
     /**
      * Konstruktor
      * Dieser legt das Objekt der Klasse ProgramController an, das den Programmfluss steuert.
@@ -48,13 +50,14 @@ public class ProgramController {
         this.viewController = viewController;
         datenbankController=new DatenbankController(this);
         budgeController=new BudgeController(datenbankController);
-        startView =new StartView(datenbankController,this,FABRIK_NUM);
+        startView =new StartView(datenbankController,this,FABRIK_NUM,ANLEITUNG_NUM);
         fabrikView=new FabrikView(datenbankController,this,CITY_NUM,NEUEFABRIK_NUM,ROUTE_NUM);
         fabrikNeuView=new FabrikNeuView(datenbankController,this,true);
         cityView=new CityView(datenbankController,this);
+        anleitungsView=new AnleitungsView(this,true);
         routeView=new RouteView(this,datenbankController,true,NEUELINIE_NUM);
         linienNeuView=new LinienNeuView(this,datenbankController,true);
-        views =new View[]{startView,fabrikView,cityView,fabrikNeuView,routeView,linienNeuView};
+        views =new View[]{startView,fabrikView,cityView,fabrikNeuView,routeView,linienNeuView,anleitungsView};
         scenenStack=new Stack<>();
         scenenStack.push(START_NUM);
 
@@ -128,7 +131,13 @@ public class ProgramController {
     public void szenenWechsel(){
         szenenWechsel(BACK_NUM);
     }
-
+    public void neustart(){
+        datenbankController.erstelleTabellen();
+        while(scenenStack.top()!=START_NUM){
+            szenenWechsel();
+        }
+        JOptionPane.showMessageDialog(null,"Du bist Bankrott gegangen:( Es gibt für alles ein erstes Mal ...");
+    }
 
     public boolean pay(int sum){
         return budgeController.pay(sum);

@@ -21,12 +21,12 @@ public class DatenbankController {
         if(databaseController.connect()) {
             erstelleTabellen();
         }
-        actFID =0;
-        actRID=0;
+
     }
 
-    private void erstelleTabellen(){
-
+    public void erstelleTabellen(){
+        actFID =0;
+        actRID=0;
         // Man kann eine temporäre Tabelle erstellen : Entweder bei SQL-Servern # oder CREATE TEMP <Name>
         //alte Tabellen finden und löschen
         String sql="SHOW TABLES LIKE'MG_%'";
@@ -446,14 +446,13 @@ public class DatenbankController {
             ausführen(sql,"Route nach "+stadt+" von Fabrik"+fabrik+" aus erweitert");
             count++;
         }
-        actRID++;
     }
 
     public int gibMenge(){
         String sql="SELECT SUM(AktProduktion)\n" +
                 "FROM MG_Fabrik";
         ausführen(sql,"Gesamtproduktion abgefragt");
-        if(databaseController.getErrorMessage()==null){
+        if(databaseController.getErrorMessage()==null && databaseController.getCurrentQueryResult().getData()[0][0]!=null){
             return Integer.parseInt(databaseController.getCurrentQueryResult().getData()[0][0]);
         }
         return 0;

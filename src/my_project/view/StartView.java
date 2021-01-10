@@ -22,11 +22,13 @@ public class StartView extends View{
     private JTextField textField2;
     private JTextField wieSollDeineErsteTextField;
     private JTextField nameField;
+    private JButton hilfeButton;
 
     private int fabrikNum;
+    private int hilfeNum;
     private DatenbankController datenbankController;
 
-    public StartView(DatenbankController datenbankController,ProgramController programController,int fabrikNum){
+    public StartView(DatenbankController datenbankController,ProgramController programController,int fabrikNum, int hilfeNum){
         super(programController,false);
         this.datenbankController=datenbankController;
         this.fabrikNum=fabrikNum;
@@ -34,7 +36,7 @@ public class StartView extends View{
         jFrame.pack();
         jFrame.setVisible(true);
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jFrame.setSize(250,400);
+        jFrame.setSize(350,400);
         jFrame.setLocation(800,400);
         datenbankController.getTableRow(cityBox,"MG_Stadt","Name");
         slider1.setMaximum(datenbankController.getProgramController().getHighestProd());
@@ -54,6 +56,12 @@ public class StartView extends View{
                     programController.setAltePop(datenbankController.getPopulation(cityBox.getModel().getSelectedItem().toString()));
                     programController.startTimer();
                 }
+            }
+        });
+        hilfeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                programController.szenenWechsel(hilfeNum);
             }
         });
     }
